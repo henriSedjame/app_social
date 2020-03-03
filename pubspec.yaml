@@ -17,6 +17,15 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter_mobx: ^1.0.1
+  firebase_auth: ^0.15.4
+  firebase: ^7.2.1
+  cloud_firestore: ^0.13.4
+  json_annotation: ^3.0.1
+  provider: ^4.0.4
+  flutter_spinkit: ^4.1.2
+  injectable: ^0.2.3
+  get_it: ^4.0.0
   flutter:
     sdk: flutter
 
@@ -25,6 +34,10 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  json_serializable: ^3.2.5
+  injectable_generator: ^0.2.4
+  build_runner: ^1.7.4
+  mobx_codegen: ^1.0.2
   flutter_test:
     sdk: flutter
 
