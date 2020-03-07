@@ -9,7 +9,10 @@ class AppGlobalStore extends _AppGlobalStore with _$AppGlobalStore{}
 abstract class _AppGlobalStore with Store {
 
   @observable
-  int currentLogMenuIdx;
+  int currentLogMenuIdx = 0;
+
+  @observable
+  String selectedMenuItem = 'home';
 
   @action
   void changeLogMenu(int idx){
@@ -18,4 +21,8 @@ abstract class _AppGlobalStore with Store {
     }
   }
 
+  @action
+  void changeAppMenu(String menu){
+    selectedMenuItem = menu;
+  }
 }

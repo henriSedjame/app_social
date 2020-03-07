@@ -27,6 +27,23 @@ mixin _$AppGlobalStore on _AppGlobalStore, Store {
     }, _$currentLogMenuIdxAtom, name: '${_$currentLogMenuIdxAtom.name}_set');
   }
 
+  final _$selectedMenuItemAtom = Atom(name: '_AppGlobalStore.selectedMenuItem');
+
+  @override
+  String get selectedMenuItem {
+    _$selectedMenuItemAtom.context.enforceReadPolicy(_$selectedMenuItemAtom);
+    _$selectedMenuItemAtom.reportObserved();
+    return super.selectedMenuItem;
+  }
+
+  @override
+  set selectedMenuItem(String value) {
+    _$selectedMenuItemAtom.context.conditionallyRunInAction(() {
+      super.selectedMenuItem = value;
+      _$selectedMenuItemAtom.reportChanged();
+    }, _$selectedMenuItemAtom, name: '${_$selectedMenuItemAtom.name}_set');
+  }
+
   final _$_AppGlobalStoreActionController =
       ActionController(name: '_AppGlobalStore');
 
@@ -41,8 +58,19 @@ mixin _$AppGlobalStore on _AppGlobalStore, Store {
   }
 
   @override
+  void changeAppMenu(String menu) {
+    final _$actionInfo = _$_AppGlobalStoreActionController.startAction();
+    try {
+      return super.changeAppMenu(menu);
+    } finally {
+      _$_AppGlobalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
-    final string = 'currentLogMenuIdx: ${currentLogMenuIdx.toString()}';
+    final string =
+        'currentLogMenuIdx: ${currentLogMenuIdx.toString()},selectedMenuItem: ${selectedMenuItem.toString()}';
     return '{$string}';
   }
 }

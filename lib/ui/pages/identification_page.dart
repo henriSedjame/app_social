@@ -3,6 +3,7 @@ import 'package:app_social/data/models/User.dart';
 import 'package:app_social/domain/services/AuthenticationService.dart';
 import 'package:app_social/domain/services/UserService.dart';
 import 'package:app_social/ui/forms/Formulaire.dart';
+import 'package:app_social/ui/utils/ToasterUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
@@ -21,7 +22,6 @@ class _IdenificationPageState extends State<IdenificationPage> {
   PageController _pageController = PageController();
   GlobalKey<FormBuilderState> _loginFormKey = GlobalKey();
   GlobalKey<FormBuilderState> _registerFormKey = GlobalKey();
-
   AuthenticationService _authenticationService;
   UserService _userService;
 
@@ -105,7 +105,7 @@ class _IdenificationPageState extends State<IdenificationPage> {
             child: passwordFormField)
       ], actionButtons: [
         AppRaisedButton(
-          onPressed: login,
+          onPressed: () => login(context),
           text: 'CONNEXION',
           elevation: 7.0,
           color: darkGrey,
@@ -137,12 +137,13 @@ class _IdenificationPageState extends State<IdenificationPage> {
     );
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     var loginFormState = _loginFormKey.currentState;
     if (loginFormState.saveAndValidate()) {
       Map<String, dynamic> value = loginFormState.value;
       var credentials = Credentials.fromJson(value);
-      await this._authenticationService.login(email: credentials.email, password: credentials.password);
+      await this._authenticationService.login(email: credentials.email, password: credentials.password)
+        .catchError((error) => ToasterUtils.showErrorMessage(context, error.message));
     }
   }
 

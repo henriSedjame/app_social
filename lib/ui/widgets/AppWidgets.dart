@@ -8,3 +8,5 @@ export 'AppImages.dart';
 export 'AppLogBar.dart';
 export 'AppRaisedButton.dart';
 export 'AppLogBarPainter.dart';
+export 'AppBottomBar.dart';
+export 'AppBottomBarItem.dart';
