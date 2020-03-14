@@ -7,7 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'config/InjectableConfig.dart' as Configuration;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Configuration.configureInjection();
+
   runApp(MyApp());
 }
 
@@ -27,7 +30,8 @@ class MyApp extends StatelessWidget {
             stream: authenticationService.authStream,
             builder:
                 (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-              return snapshot.hasData ? MainPage(userId: snapshot.data.uid) : IdenificationPage();
-            }));
+              return snapshot.hasData ? MainPage(userId: snapshot.data.uid) : IdentificationPage();
+            }),
+    );
   }
 }

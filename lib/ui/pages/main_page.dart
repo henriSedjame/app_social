@@ -1,4 +1,9 @@
 import 'package:app_social/domain/services/AuthenticationService.dart';
+import 'package:app_social/ui/pages/create_post_view.dart';
+import 'package:app_social/ui/pages/friends_page.dart';
+import 'package:app_social/ui/pages/home_page.dart';
+import 'package:app_social/ui/pages/notifications_page.dart';
+import 'package:app_social/ui/pages/profile_page.dart';
 import 'package:app_social/ui/stores/AppGlobalStore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -17,6 +22,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
 
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   AuthenticationService _authenticationService;
   AppGlobalStore _store;
 
@@ -25,69 +31,64 @@ class _MainPageState extends State<MainPage> {
     super.didChangeDependencies();
     _authenticationService ??= GetIt.instance<AuthenticationService>();
     _store ??= GetIt.instance<AppGlobalStore>();
+    _store.loadUser(widget.userId);
+    print('did change dependencies ');
   }
 
   @override
   void initState() {
     super.initState();
+    print('Init state');
   }
 
   @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_){
-        return Scaffold(
-          bottomNavigationBar: AppBottomBar(
-            items: <Widget>[
-              AppBottomBarItem(
-                store: _store,
-                name: 'home',
-                icon: Icon(Icons.home),
-                onPressed: (){},
-              ),
-              AppBottomBarItem(
-                store: _store,
-                name: 'friends',
-                icon: Icon(Icons.group),
-                onPressed: (){},
-              ),
-              Container(width: 0, height: 0,),
-              AppBottomBarItem(
-                store: _store,
-                name: 'notifications',
-                icon: Icon(Icons.notifications),
-                onPressed: (){},
-              ),
-              AppBottomBarItem(
-                store: _store,
-                name: 'account',
-                icon: Icon(Icons.account_circle),
-                onPressed: (){},
-              )
-            ],
-          ),
+        return (_store.connexionState == ConnexionState.CONNECTED) ? Scaffold(
+          key: _scaffoldKey,
+          bottomNavigationBar: appBottomBar(),
           floatingActionButton: FloatingActionButton(
-            onPressed: (){},
+            onPressed: () => _scaffoldKey.currentState.showBottomSheet((context) => CreatePostView(widget.userId)),
             backgroundColor: blueLight,
-            child: Icon(Icons.border_color),
+            child: writeIcon,
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('${widget.userId}'),
-                  AppRaisedButton(
-                    text: 'DECONNEXION',
-                    color: Colors.blueGrey[900],
-                    elevation: 0.0,
-                    onPressed: () => _authenticationService.logout(),
-                  )
-                ],
-              )
-          ),
-        );
+          body: Center(child: menuPages(widget.userId)[_store.selectedMenuItem]),
+        ) : AppLoading();
       },
     );
+  }
+
+  AppBottomBar appBottomBar() {
+    return AppBottomBar(
+          items: <Widget>[
+            AppBottomBarItem(
+              store: _store,
+              name: HOME,
+              icon: homeIcon,
+              onPressed: (){},
+            ),
+            AppBottomBarItem(
+              store: _store,
+              name: FRIENDS,
+              icon: friendsIcon,
+              onPressed: (){},
+            ),
+            Container(width: 0, height: 0,),
+            AppBottomBarItem(
+              store: _store,
+              name: NOTIFICATIONS,
+              icon: notificationsIcon,
+              onPressed: (){},
+            ),
+            AppBottomBarItem(
+              store: _store,
+              name: PROFILE,
+              icon: profileIcon,
+              onPressed: (){},
+            )
+          ],
+        );
   }
 }

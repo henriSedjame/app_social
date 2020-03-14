@@ -14,6 +14,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
     json['imageUrl'] as String,
   )
     ..id = json['id'] as String
+    ..description = json['description'] as String
     ..followers = (json['followers'] as List)?.map((e) => e as String)?.toList()
     ..followings =
         (json['followings'] as List)?.map((e) => e as String)?.toList();
@@ -25,6 +26,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'prenom': instance.prenom,
       'email': instance.email,
       'imageUrl': instance.imageUrl,
+      'description': instance.description,
       'followers': instance.followers,
       'followings': instance.followings,
     };

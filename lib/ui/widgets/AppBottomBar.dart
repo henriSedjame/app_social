@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppBottomBar extends BottomAppBar {
   AppBottomBar({@required List<Widget> items}) : super(
+    elevation: 7.0,
     shape: CircularNotchedRectangle(),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

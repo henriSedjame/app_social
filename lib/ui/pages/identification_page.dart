@@ -9,14 +9,14 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get_it/get_it.dart';
 import '../widgets/AppWidgets.dart';
 
-class IdenificationPage extends StatefulWidget {
-  IdenificationPage({Key key}) : super(key: key);
+class IdentificationPage extends StatefulWidget {
+  IdentificationPage({Key key}) : super(key: key);
 
   @override
-  _IdenificationPageState createState() => _IdenificationPageState();
+  _IdentificationPageState createState() => _IdentificationPageState();
 }
 
-class _IdenificationPageState extends State<IdenificationPage> {
+class _IdentificationPageState extends State<IdentificationPage> {
 
   final double minHeight = 600.0;
   PageController _pageController = PageController();
@@ -44,47 +44,50 @@ class _IdenificationPageState extends State<IdenificationPage> {
           return true;
         },
         child: SingleChildScrollView(
-          child: Container(
-            width: ctxWidth,
-            height: ctxHeight >= minHeight ? ctxHeight : minHeight,
-            color: primaryColor,
-            child: SafeArea(
-              child: Column(
-                children: <Widget>[
-                  AppPadding(
-                      bottom: 5.0,
-                      child: Image(
-                        image: appLogoImage,
-                        width: 120.0,
-                      )),
-                  AppPadding(
-                    bottom: 25.0,
-                    child: AppLogBar(
-                      menu1: 'CONNEXON',
-                      menu2: 'INSCRIPTION',
-                      pageController: _pageController,
+          child: InkWell(
+            onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+            child: Container(
+              width: ctxWidth,
+              height: ctxHeight >= minHeight ? ctxHeight : minHeight,
+              color: primaryColor,
+              child: SafeArea(
+                child: Column(
+                  children: <Widget>[
+                    AppPadding(
+                        bottom: 5.0,
+                        child: Image(
+                          image: appLogoImage,
+                          width: 120.0,
+                        )),
+                    AppPadding(
+                      bottom: 25.0,
+                      child: AppLogBar(
+                        menu1: 'CONNEXON',
+                        menu2: 'INSCRIPTION',
+                        pageController: _pageController,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: PageView(
-                        controller: _pageController,
-                        children: <Widget>[
-                          AppPadding(
-                            child: loginForm(),
-                            top: 0.0,
-                            left: 10.0,
-                            right: 10.0,
-                          ),
-                          AppPadding(
-                            child: registerForm(),
-                            top: 0.0,
-                            left: 10.0,
-                            right: 10.0,
-                          ),
-                        ],
-                      ))
-                ],
+                    Expanded(
+                        flex: 2,
+                        child: PageView(
+                          controller: _pageController,
+                          children: <Widget>[
+                            AppPadding(
+                              child: loginForm(),
+                              top: 0.0,
+                              left: 10.0,
+                              right: 10.0,
+                            ),
+                            AppPadding(
+                              child: registerForm(),
+                              top: 0.0,
+                              left: 10.0,
+                              right: 10.0,
+                            ),
+                          ],
+                        ))
+                  ],
+                ),
               ),
             ),
           ),
@@ -96,7 +99,7 @@ class _IdenificationPageState extends State<IdenificationPage> {
   Widget loginForm() {
     return SingleChildScrollView(
       child: Formulaire(formKey: _loginFormKey, formFields: [
-        AppPadding(top: 5.0, left: 10.0, right: 10.0, child: emailFormField),
+        AppPadding(top: 10.0, left: 10.0, right: 10.0, child: emailFormField),
         AppPadding(
             top: 10.0,
             left: 10.0,
@@ -117,7 +120,7 @@ class _IdenificationPageState extends State<IdenificationPage> {
   Widget registerForm() {
     return SingleChildScrollView(
       child: Formulaire(formKey: _registerFormKey, formFields: [
-        AppPadding(top: 5.0, left: 10.0, right: 10.0, child: nomFormField),
+        AppPadding(top: 10.0, left: 10.0, right: 10.0, child: nomFormField),
         AppPadding(top: 5.0, left: 10.0, right: 10.0, child: prenomFormField),
         AppPadding(top: 5.0, left: 10.0, right: 10.0, child: emailFormField),
         AppPadding(
@@ -144,6 +147,7 @@ class _IdenificationPageState extends State<IdenificationPage> {
       var credentials = Credentials.fromJson(value);
       await this._authenticationService.login(email: credentials.email, password: credentials.password)
         .catchError((error) => ToasterUtils.showErrorMessage(context, error.message));
+      loginFormState.reset();
     }
   }
 
@@ -152,6 +156,7 @@ class _IdenificationPageState extends State<IdenificationPage> {
     if (registerFormState.saveAndValidate()) {
       var value = registerFormState.value;
       await this._userService.save(User.fromJson(value), Credentials.fromJson(value).password);
+      registerFormState.reset();
     }
   }
 }

@@ -12,6 +12,7 @@ class User extends BaseModel {
   String prenom;
   String email;
   String imageUrl;
+  String description;
   List<String> followers;
   List<String> followings;
 
