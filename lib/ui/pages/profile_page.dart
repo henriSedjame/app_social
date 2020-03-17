@@ -2,16 +2,21 @@ import 'package:app_social/data/models/Post.dart';
 import 'package:app_social/data/models/User.dart';
 import 'package:app_social/domain/services/AuthenticationService.dart';
 import 'package:app_social/domain/services/PostService.dart';
+import 'package:app_social/ui/pages/change_image_view.dart';
+import 'package:app_social/ui/pages/update_user_info_view.dart';
 import 'package:app_social/ui/stores/AppGlobalStore.dart';
 import 'package:app_social/ui/stores/ProfilePageStore.dart';
 import 'package:app_social/ui/utils/ToasterUtils.dart';
+import 'package:app_social/ui/utils/UIUtils.dart';
 import 'package:app_social/ui/widgets/AppImages.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
 
 import '../widgets/AppWidgets.dart';
+import '../../extensions/StringExtension.dart';
 
 class ProfilePage extends StatefulWidget {
   String userId;
@@ -23,7 +28,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   AuthenticationService _authenticationService;
   PostService _postService;
   AppGlobalStore _globalStore;
@@ -67,11 +71,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (BuildContext ctx) {
-        var user = this.myOwnProfile ? this._globalStore.currentUser : this._store.user;
+        var user = this.myOwnProfile
+            ? this._globalStore.currentUser
+            : this._store.user;
         return postsView(user);
       },
     );
   }
+
+  bool get _showTitle =>
+      this._scrollController.hasClients &&
+      this._scrollController.offset > (_expandedHeight - kToolbarHeight);
 
   StreamBuilder<List<Post>> postsView(User user) {
     return StreamBuilder<List<Post>>(
@@ -86,12 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SliverAppBar(
                 expandedHeight: _expandedHeight,
                 pinned: true,
-                actions: <Widget>[
-                  myOwnProfile ? IconButton(
-                    icon:logoutIcon,
-                    onPressed: () => ToasterUtils.showLogOutDialog(context, () => logout(context)),
-                  ) : Text('SUIVRE')
-                ],
+                actions: <Widget>[popUpMenu(context, user)],
                 flexibleSpace: FlexibleSpaceBar(
                   title: _showTitle
                       ? Text('${user.nom} ${user.prenom}')
@@ -99,13 +104,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   background: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: appProfilImage, fit: BoxFit.cover),
+                          image: (user.coverUrl.isNotBlank)
+                              ? CachedNetworkImageProvider(user.coverUrl)
+                              : appProfilImage,
+                          fit: BoxFit.cover),
                     ),
                     child: Center(
                       child: AppProfileImage(
                         src: user.imageUrl,
                         size: 45.0,
-                        onTap: () {},
+                        onTap: () => updateProfilImage(context, user),
                       ),
                     ),
                   ),
@@ -114,7 +122,10 @@ class _ProfilePageState extends State<ProfilePage> {
               SliverPersistentHeader(
                 pinned: true,
                 delegate: AppPersisentHeaderDelegate(
-                    user: user, scrolled: _showTitle, callback: () {}),
+                    user: user,
+                    scrolled: _showTitle,
+                    isConnectedUser: myOwnProfile,
+                    updateUserInfo: () => this.updateUserInfo(context, user)),
               ),
               SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -130,9 +141,36 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  bool get _showTitle =>
-      this._scrollController.hasClients &&
-      this._scrollController.offset > (_expandedHeight - kToolbarHeight);
+  PopupMenuButton popUpMenu(BuildContext context, User user) {
+    return PopupMenuButton(
+      itemBuilder: (ctx) => [
+        PopupMenuItem(
+            child: FlatButton(
+                child: Text('Modifier la couverture'),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  updateCoverImage(context, user);
+                })),
+        PopupMenuItem(
+          height: 1.0,
+          child: AppDivider(
+            color: ternaryColor,
+            paddingTop: 1.0,
+            paddingBottom: 1.0,
+          ),
+        ),
+        PopupMenuItem(
+          child: FlatButton(
+            child: Text('Deconnexion'),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ToasterUtils.showLogOutDialog(context, () => logout(context));
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget buildSliverChild(int index, List<Post> posts, User user) {
     if (index == posts.length) {
@@ -147,16 +185,67 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void likePost(Post post, User liker, bool add){
+  void likePost(Post post, User liker, bool add) {
     if (add) {
       this._postService.addLike(post, liker, this._globalStore.currentUser.id);
     } else {
-      this._postService.removeLike(post, liker, this._globalStore.currentUser.id);
+      this
+          ._postService
+          .removeLike(post, liker, this._globalStore.currentUser.id);
     }
   }
 
   void logout(BuildContext context) {
     Navigator.pop(context);
     this._authenticationService.logout();
+  }
+
+  void updateUserInfo(BuildContext context, User user) {
+    UIUtils.showAppBottomSheet(
+        context: context,
+        store: this._globalStore,
+        widget: UpdateUserInfoView(user.id));
+  }
+
+  void updateProfilImage(BuildContext context, User user) {
+    this._updateImage(
+        context: context,
+        imageUrl: user.imageUrl,
+        type: ImageType.PROFILE,
+        user: user,
+        consumer: (url) => this
+            ._globalStore
+            .updateUser(user..imageUrl = url)
+            .then((_) => this._globalStore.resetImageUrl()));
+  }
+
+  void updateCoverImage(BuildContext context, User user) {
+    this._updateImage(
+        context: context,
+        imageUrl: user.coverUrl,
+        type: ImageType.COVER,
+        user: user,
+        consumer: (url) => this
+            ._globalStore
+            .updateUser(user..coverUrl = url)
+            .then((_) => this._globalStore.resetImageUrl()));
+  }
+
+  void _updateImage(
+      {BuildContext context,
+      User user,
+      ImageType type,
+      String imageUrl,
+      Function consumer}) {
+    UIUtils.showAppBottomSheetWithResult<String>(
+        widget: ChangeImageView(
+          imageUrl: imageUrl,
+          type: type,
+        ),
+        context: context,
+        store: this._globalStore,
+        func: (store) => store.imageUrl).then((url) {
+          if (url.isNotBlank) consumer(url);
+        });
   }
 }

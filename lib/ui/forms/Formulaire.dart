@@ -4,11 +4,13 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import '../widgets/AppWidgets.dart';
 
 class Formulaire extends StatefulWidget {
+
   final GlobalKey<FormBuilderState> formKey;
   final List<Widget> formFields;
   final List<Widget> actionButtons;
+  Map<String, dynamic> initialValue = {};
 
-  Formulaire({@required this.formKey, @required this.formFields, @required this.actionButtons, Key key})
+  Formulaire({@required this.formKey, @required this.formFields, @required this.actionButtons, this.initialValue, Key key})
       : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class _FormulaireState extends State<Formulaire> {
             children: <Widget>[
               FormBuilder(
                   key: widget.formKey,
-                  initialValue: {},
+                  initialValue: widget.initialValue ?? {},
                   autovalidate: true,
                   child: Column(children: widget.formFields)),
               AppPadding(

@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:app_social/data/Tables.dart';
+import 'package:app_social/data/FileStores.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -21,10 +21,20 @@ class FileStorage {
   }
 
   Future<String> storePostFile(File file, String postId, String userId) async {
-    if (file == null) {
-      return Future.value('');
-    }
-    var storageReference = this._storage.child(Tables.POSTS).child(userId).child(postId);
+    if (file == null) return Future.value('');
+
+    var storageReference = this._storage.child(FileStores.POSTS).child(userId).child(postId);
+    return await _store(storageReference, file);
+  }
+
+  Future<String> storeUserProfileImage(File file, String userId) => _storeUserImage(file, userId, FileStores.PROFILE_IMAGES);
+
+  Future<String> storeUserCoverImage(File file, String userId) => _storeUserImage(file, userId, FileStores.COVER_IMAGES);
+
+  Future<String> _storeUserImage(File file, String userId, String type) async {
+    if (file == null) return Future.value('');
+
+    var storageReference = this._storage.child(FileStores.USERS).child(userId).child(type);
     return await _store(storageReference, file);
   }
 

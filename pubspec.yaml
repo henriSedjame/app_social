@@ -14,7 +14,7 @@ description: App Social formation flutter
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter_mobx: ^1.0.1
@@ -32,6 +32,7 @@ dependencies:
   rxdart: ^0.23.1
   image_picker: ^0.6.3+4
   cached_network_image: ^2.0.0
+
   flutter:
     sdk: flutter
 
@@ -44,6 +45,7 @@ dev_dependencies:
   injectable_generator: ^0.3.1
   build_runner: ^1.8.0
   mobx_codegen: ^1.0.2
+  test:
   flutter_test:
     sdk: flutter
 

@@ -11,7 +11,8 @@ import '../UserService.dart';
 
 @RegisterAs(UserService)
 @Singleton(signalsReady: true)
-class UserServiceImpl extends UserService {
+class
+UserServiceImpl extends UserService {
 
   UserRepository _userRepository;
   AuthenticationService _authenticationService;
@@ -33,9 +34,15 @@ class UserServiceImpl extends UserService {
           ..id = authResult.user.uid
           ..description = ''
           ..imageUrl ??= ''
+          ..coverUrl ??=''
           ..followings = []
           ..followers = []))
         .then((userId) => user..id = userId);
+  }
+
+  @override
+  Future<User> update(User user) {
+    return this._userRepository.update(user).then((_) => user);
   }
 
 }

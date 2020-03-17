@@ -20,8 +20,8 @@ class ToasterUtils {
         );
       }
     );
-
   }
+
   static void showErrorMessage(BuildContext context, String message) {
     showDialog(
       context: context,

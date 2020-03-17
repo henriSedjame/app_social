@@ -142,12 +142,12 @@ class _IdentificationPageState extends State<IdentificationPage> {
 
   Future<void> login(BuildContext context) async {
     var loginFormState = _loginFormKey.currentState;
-    if (loginFormState.saveAndValidate()) {
-      Map<String, dynamic> value = loginFormState.value;
+    if (loginFormState?.saveAndValidate() ?? false) {
+      Map<String, dynamic> value = loginFormState?.value;
       var credentials = Credentials.fromJson(value);
       await this._authenticationService.login(email: credentials.email, password: credentials.password)
         .catchError((error) => ToasterUtils.showErrorMessage(context, error.message));
-      loginFormState.reset();
+      loginFormState?.reset();
     }
   }
 

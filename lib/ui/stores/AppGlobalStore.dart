@@ -3,6 +3,7 @@ import 'package:app_social/domain/services/UserService.dart';
 import 'package:app_social/ui/widgets/AppMenuItems.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobx/mobx.dart';
+import '../../extensions/MapExtension.dart';
 
 part 'AppGlobalStore.g.dart';
 
@@ -33,6 +34,12 @@ abstract class _AppGlobalStore with Store {
   @observable
   User _currentUser;
 
+  @observable
+  String _imageUrl;
+
+  @observable
+  bool _editing = false;
+
   /* Computed */
   @computed
   int get currentLogMenuIdx => _currentLogMenuIdx;
@@ -42,6 +49,12 @@ abstract class _AppGlobalStore with Store {
 
   @computed
   User get currentUser => _currentUser;
+
+  @computed
+  bool get editing => _editing;
+
+  @computed
+  String get imageUrl => _imageUrl;
 
   @computed
   ConnexionState get connexionState {
@@ -76,6 +89,23 @@ abstract class _AppGlobalStore with Store {
     _currentUser ??= await _futureUser;
   }
 
+  @action
+  Future<void> updateUser(User user) async {
+    var merged = user.toJson().mergeIn(this._currentUser.toJson());
+    this._futureUser = ObservableFuture(this._userService.update(User.fromJson(merged)));
+    this._currentUser = await this._futureUser;
+  }
+
+  @action
+  void edit() => this._editing = !this._editing;
+
+  @action
+  void updateImageUrl(String url){
+    this._imageUrl = url;
+  }
+
+  @action
+  void resetImageUrl() => this._imageUrl = null;
 }
 
 enum ConnexionState {DISCONNECTED, CONNECTING, CONNECTED}

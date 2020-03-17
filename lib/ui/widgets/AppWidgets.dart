@@ -18,3 +18,4 @@ export 'AppDivider.dart';
 export 'AppPostTile.dart';
 export 'AppIcons.dart';
 export 'AppTypeDefs.dart';
+export 'AppClikeableText.dart';

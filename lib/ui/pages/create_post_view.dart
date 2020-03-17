@@ -4,6 +4,7 @@ import 'package:app_social/data/models/Post.dart';
 import 'package:app_social/domain/services/PostService.dart';
 import 'package:app_social/ui/forms/Formulaire.dart';
 import 'package:app_social/ui/utils/ToasterUtils.dart';
+import 'package:app_social/ui/utils/UIUtils.dart';
 import 'package:app_social/ui/widgets/AppColors.dart';
 import 'package:app_social/ui/widgets/AppPadding.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class CreatePostView extends StatefulWidget {
 }
 
 class _CreatePostViewState extends State<CreatePostView> {
+
   File _imageFile;
   GlobalKey<FormBuilderState> _postFormKey = GlobalKey();
   PostService _postService;
@@ -70,8 +72,11 @@ class _CreatePostViewState extends State<CreatePostView> {
 
   InkWell postForm(BuildContext context) {
     return InkWell(
-      onTap: () => hideKeyBoard(context),
+      onTap: () => UIUtils.hideKeyBoard(context),
       child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(105.0)
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -142,11 +147,8 @@ class _CreatePostViewState extends State<CreatePostView> {
     );
   }
 
-  void hideKeyBoard(BuildContext context) =>
-      FocusScope.of(context).requestFocus(FocusNode());
-
   Future<void> takePicture(ImageSource source, BuildContext context) async {
-    this.hideKeyBoard(context);
+    UIUtils.hideKeyBoard(context);
     var pickImage = await ImagePicker.pickImage(
         source: source, maxHeight: 500, maxWidth: 500);
 

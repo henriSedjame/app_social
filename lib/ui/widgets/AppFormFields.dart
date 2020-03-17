@@ -1,5 +1,4 @@
 
-import 'package:app_social/ui/widgets/AppMenuItems.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -19,10 +18,19 @@ final prenomFormField = FormBuilderTextField(
   attribute: 'prenom',
   decoration: InputDecoration(
     hintText: 'Entrez votre prénom',
+    labelText: 'Prénom'
   ),
   validators: [
     FormBuilderValidators.required(errorText: 'Veuillez renseigner votre prénom.')
   ],
+);
+
+final descriptionFormField = FormBuilderTextField(
+  attribute: 'description',
+  decoration: InputDecoration(
+      hintText: 'Entrez votre description',
+  ),
+  validators: [],
 );
 
 final emailFormField = FormBuilderTextField(

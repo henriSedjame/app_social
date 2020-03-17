@@ -26,6 +26,16 @@ mixin _$AppGlobalStore on _AppGlobalStore, Store {
   @override
   User get currentUser =>
       (_$currentUserComputed ??= Computed<User>(() => super.currentUser)).value;
+  Computed<bool> _$editingComputed;
+
+  @override
+  bool get editing =>
+      (_$editingComputed ??= Computed<bool>(() => super.editing)).value;
+  Computed<String> _$imageUrlComputed;
+
+  @override
+  String get imageUrl =>
+      (_$imageUrlComputed ??= Computed<String>(() => super.imageUrl)).value;
   Computed<ConnexionState> _$connexionStateComputed;
 
   @override
@@ -104,11 +114,52 @@ mixin _$AppGlobalStore on _AppGlobalStore, Store {
     }, _$_currentUserAtom, name: '${_$_currentUserAtom.name}_set');
   }
 
+  final _$_imageUrlAtom = Atom(name: '_AppGlobalStore._imageUrl');
+
+  @override
+  String get _imageUrl {
+    _$_imageUrlAtom.context.enforceReadPolicy(_$_imageUrlAtom);
+    _$_imageUrlAtom.reportObserved();
+    return super._imageUrl;
+  }
+
+  @override
+  set _imageUrl(String value) {
+    _$_imageUrlAtom.context.conditionallyRunInAction(() {
+      super._imageUrl = value;
+      _$_imageUrlAtom.reportChanged();
+    }, _$_imageUrlAtom, name: '${_$_imageUrlAtom.name}_set');
+  }
+
+  final _$_editingAtom = Atom(name: '_AppGlobalStore._editing');
+
+  @override
+  bool get _editing {
+    _$_editingAtom.context.enforceReadPolicy(_$_editingAtom);
+    _$_editingAtom.reportObserved();
+    return super._editing;
+  }
+
+  @override
+  set _editing(bool value) {
+    _$_editingAtom.context.conditionallyRunInAction(() {
+      super._editing = value;
+      _$_editingAtom.reportChanged();
+    }, _$_editingAtom, name: '${_$_editingAtom.name}_set');
+  }
+
   final _$loadUserAsyncAction = AsyncAction('loadUser');
 
   @override
   Future<void> loadUser(String userId) {
     return _$loadUserAsyncAction.run(() => super.loadUser(userId));
+  }
+
+  final _$updateUserAsyncAction = AsyncAction('updateUser');
+
+  @override
+  Future<void> updateUser(User user) {
+    return _$updateUserAsyncAction.run(() => super.updateUser(user));
   }
 
   final _$_AppGlobalStoreActionController =
@@ -135,9 +186,39 @@ mixin _$AppGlobalStore on _AppGlobalStore, Store {
   }
 
   @override
+  void edit() {
+    final _$actionInfo = _$_AppGlobalStoreActionController.startAction();
+    try {
+      return super.edit();
+    } finally {
+      _$_AppGlobalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateImageUrl(String url) {
+    final _$actionInfo = _$_AppGlobalStoreActionController.startAction();
+    try {
+      return super.updateImageUrl(url);
+    } finally {
+      _$_AppGlobalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void resetImageUrl() {
+    final _$actionInfo = _$_AppGlobalStoreActionController.startAction();
+    try {
+      return super.resetImageUrl();
+    } finally {
+      _$_AppGlobalStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     final string =
-        'currentLogMenuIdx: ${currentLogMenuIdx.toString()},selectedMenuItem: ${selectedMenuItem.toString()},currentUser: ${currentUser.toString()},connexionState: ${connexionState.toString()}';
+        'currentLogMenuIdx: ${currentLogMenuIdx.toString()},selectedMenuItem: ${selectedMenuItem.toString()},currentUser: ${currentUser.toString()},editing: ${editing.toString()},imageUrl: ${imageUrl.toString()},connexionState: ${connexionState.toString()}';
     return '{$string}';
   }
 }

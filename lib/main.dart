@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'Social App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          primarySwatch: Colors.grey,
           primaryColor: Colors.blueGrey[900],
           accentColor: Colors.blueGrey[400],
         ),
